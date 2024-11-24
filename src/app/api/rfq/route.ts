@@ -1,4 +1,4 @@
-// app/api/rfq/route.ts
+// src/app/api/rfq/route.ts
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -23,11 +23,14 @@ export async function GET(request: Request) {
 
     const response = await fetch(url.toString());
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("External API Error:", errorText);
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error fetching quote:", error);
     return NextResponse.json({ error: "Error fetching quote" }, { status: 500 });
   }
 }

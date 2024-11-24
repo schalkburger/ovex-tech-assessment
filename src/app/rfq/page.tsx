@@ -1,4 +1,4 @@
-// app/rfq/page.tsx
+// src/app/rfq/page.tsx
 "use client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -21,9 +21,19 @@ interface Market {
 }
 
 interface Quote {
-  cost: number;
-  rate: number;
-  total_amount: number;
+  market: string;
+  side: string;
+  from_currency: string;
+  from_amount: string;
+  to_currency: string;
+  to_amount: string;
+  rate: string;
+  rate_is_from_currency: boolean;
+  requested_at: number;
+  expires_at: number;
+  is_prefunded: boolean;
+  sn: null;
+  message: string;
 }
 
 export default function RFQPage() {
@@ -52,11 +62,7 @@ export default function RFQPage() {
       try {
         const response = await fetch(`/api/rfq?market=${selectedMarket}&from_amount=${amount}`);
         const data = await response.json();
-        setQuote({
-          cost: data.cost,
-          rate: data.rate,
-          total_amount: data.total_amount,
-        });
+        setQuote(data);
       } catch (error) {
         console.error("Error fetching quote:", error);
       }
@@ -88,9 +94,15 @@ export default function RFQPage() {
         {quote && (
           <Card className="p-6 mt-4">
             <h2 className="text-xl font-bold mb-2">Quotation Details</h2>
-            <p>Cost of the trade: {quote.cost}</p>
-            <p>Rate (Price per coin): {quote.rate}</p>
-            <p>Total amount of the asset you will receive: {quote.total_amount}</p>
+            <p>
+              Cost of the trade: {quote.from_amount} {quote.from_currency}
+            </p>
+            <p>
+              Rate (Price per coin): {quote.rate} {quote.from_currency}
+            </p>
+            <p>
+              Total amount of the asset you will receive: {quote.to_amount} {quote.to_currency}
+            </p>
           </Card>
         )}
       </section>
