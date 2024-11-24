@@ -29,7 +29,7 @@ export default function RFQPage() {
         const response = await fetch("/api/markets");
         const data = await response.json();
         // setMarkets(data);
-        console.log(data);
+        console.log("Markets data -->", data);
       } catch (error) {
         console.error("Error fetching markets:", error);
       }
