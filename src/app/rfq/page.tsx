@@ -1,8 +1,13 @@
 // src/app/rfq/page.tsx
 "use client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 
 import { useEffect, useState } from "react";
@@ -41,6 +46,7 @@ export default function RFQPage() {
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>("");
   const [quote, setQuote] = useState<Quote | null>(null);
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     const fetchMarkets = async () => {
@@ -89,21 +95,40 @@ export default function RFQPage() {
 
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-mirage-950">
-      <section className="flex flex-col max-w-screen-lg lg:min-w-96 justify-center items-center bg-slate-700 p-6 md:p-8 rounded-md">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-white">Request for Quote</h1>
+      <section className="flex flex-col max-w-screen-lg min-w-96 justify-center items-center bg-slate-700 p-8 rounded-md">
+        <h1 className="text-3xl font-bold mb-4 text-white">Request for Quote</h1>
         <p className="text-lg text-white mb-4">{getMarketText(selectedMarket)}</p>
-        <Select onValueChange={(value) => setSelectedMarket(value)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a trading pair" />
-          </SelectTrigger>
-          <SelectContent>
-            {markets.map((market) => (
-              <SelectItem key={market.id} value={market.id}>
-                {market.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+              {selectedMarket ? markets.find((market) => market.id === selectedMarket)?.name : "Select trading pair..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="PopoverContent w-full p-0">
+            <Command>
+              <CommandInput placeholder="Search trading pair..." />
+              <CommandList>
+                <CommandEmpty>No trading pair found.</CommandEmpty>
+                <CommandGroup>
+                  {markets.map((market) => (
+                    <CommandItem
+                      key={market.id}
+                      value={market.id}
+                      onSelect={(currentValue) => {
+                        setSelectedMarket(currentValue === selectedMarket ? "" : currentValue);
+                        setOpen(false);
+                      }}
+                    >
+                      <Check className={cn("mr-2 h-4 w-4", selectedMarket === market.id ? "opacity-100" : "opacity-0")} />
+                      {market.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         <Input type="number" placeholder={getPlaceholderText(selectedMarket)} value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-4" />
         <Button onClick={handleRequestQuote} className="mt-4 w-full py-6 bg-mirage-800 hover:bg-mirage-900 text-lg">
           Request Quote
