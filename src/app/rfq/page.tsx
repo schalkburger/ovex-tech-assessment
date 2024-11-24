@@ -89,8 +89,8 @@ export default function RFQPage() {
 
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-mirage-950">
-      <section className="flex flex-col max-w-screen-lg min-w-96 justify-center items-center bg-slate-700 p-8 rounded-md">
-        <h1 className="text-3xl font-bold mb-4 text-white">Request for Quote</h1>
+      <section className="flex flex-col max-w-screen-lg lg:min-w-96 justify-center items-center bg-slate-700 p-6 md:p-8 rounded-md">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-white">Request for Quote</h1>
         <p className="text-lg text-white mb-4">{getMarketText(selectedMarket)}</p>
         <Select onValueChange={(value) => setSelectedMarket(value)}>
           <SelectTrigger className="w-full">
