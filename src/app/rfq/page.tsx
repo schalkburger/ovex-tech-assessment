@@ -1,8 +1,9 @@
 // app/rfq/page.tsx
 "use client";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 import { useEffect, useState } from "react";
 
@@ -65,24 +66,34 @@ export default function RFQPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-mirage-950">
-      <h1 className="text-3xl font-bold mb-4 text-white">Request for Quote</h1>
-      <Select onValueChange={(value) => setSelectedMarket(value)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a trading pair" />
-        </SelectTrigger>
-        <SelectContent>
-          {markets.map((market) => (
-            <SelectItem key={market.id} value={market.id}>
-              {market.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-4" />
-      <Button onClick={handleRequestQuote} className="mt-4">
-        Request Quote
-      </Button>
+    <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-mirage-950">
+      <section className="flex flex-col max-w-screen-lg min-w-96 justify-center items-center bg-slate-700 p-8 rounded-md">
+        <h1 className="text-3xl font-bold mb-4 text-white">Request for Quote</h1>
+        <Select onValueChange={(value) => setSelectedMarket(value)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a trading pair" />
+          </SelectTrigger>
+          <SelectContent>
+            {markets.map((market) => (
+              <SelectItem key={market.id} value={market.id}>
+                {market.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-4" />
+        <Button onClick={handleRequestQuote} className="mt-4">
+          Request Quote
+        </Button>
+        {quote && (
+          <Card className="p-6 mt-4">
+            <h2 className="text-xl font-bold mb-2">Quotation Details</h2>
+            <p>Cost of the trade: {quote.cost}</p>
+            <p>Rate (Price per coin): {quote.rate}</p>
+            <p>Total amount of the asset you will receive: {quote.total_amount}</p>
+          </Card>
+        )}
+      </section>
     </div>
   );
 }
