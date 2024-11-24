@@ -71,10 +71,27 @@ export default function RFQPage() {
     }
   };
 
+  const getMarketText = (marketId: string | null) => {
+    const market = markets.find((m) => m.id === marketId);
+    if (market) {
+      return `Buy ${market.base_currency.toUpperCase()} with ${market.quote_currency.toUpperCase()}`;
+    }
+    return "";
+  };
+
+  const getPlaceholderText = (marketId: string | null) => {
+    const market = markets.find((m) => m.id === marketId);
+    if (market) {
+      return `Amount in ${market.quote_currency.toUpperCase()}`;
+    }
+    return "Amount";
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-mirage-950">
       <section className="flex flex-col max-w-screen-lg min-w-96 justify-center items-center bg-slate-700 p-8 rounded-md">
         <h1 className="text-3xl font-bold mb-4 text-white">Request for Quote</h1>
+        <p className="text-lg text-white mb-4">{getMarketText(selectedMarket)}</p>
         <Select onValueChange={(value) => setSelectedMarket(value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a trading pair" />
@@ -87,21 +104,24 @@ export default function RFQPage() {
             ))}
           </SelectContent>
         </Select>
-        <Input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-4" />
-        <Button onClick={handleRequestQuote} className="mt-4">
+        <Input type="number" placeholder={getPlaceholderText(selectedMarket)} value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-4" />
+        <Button onClick={handleRequestQuote} className="mt-4 w-full py-6 bg-mirage-800 hover:bg-mirage-900 text-lg">
           Request Quote
         </Button>
         {quote && (
           <Card className="p-6 mt-4">
             <h2 className="text-xl font-bold mb-2">Quotation Details</h2>
             <p>
-              Cost of the trade: {quote.from_amount} {quote.from_currency}
+              Cost of the trade: {quote.from_amount} <span className="uppercase">{quote.from_currency}</span>
             </p>
             <p>
-              Rate (Price per coin): {quote.rate} {quote.from_currency}
+              Rate (Price per coin): {quote.rate} <span className="uppercase">{quote.from_currency}</span>
             </p>
             <p>
-              Total amount of the asset you will receive: {quote.to_amount} {quote.to_currency}
+              Total amount of the asset you will receive:{" "}
+              <span className="uppercase">
+                {quote.to_amount} {quote.to_currency}
+              </span>
             </p>
           </Card>
         )}
